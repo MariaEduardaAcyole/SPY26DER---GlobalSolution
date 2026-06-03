@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPY26DER | Robótica de Mapeamento Lunar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#020812;--bg2:#060D1F;--bg3:#0B1630;
+  --cyan:#00D4FF;--orange:#FF6B35;--gold:#FFB800;--green:#00FF88;
+  --text:#E8EDF8;--muted:#7A8FA8;
+  --border:rgba(0,212,255,0.14);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.6;overflow-x:hidden;}
+
+/* ---- NAV ---- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 3rem;
+  background:rgba(2,8,18,0.88);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.35rem;
+  color:var(--cyan);letter-spacing:0.12em;text-decoration:none;
+}
+.nav-logo span{color:var(--orange);}
+nav ul{display:flex;gap:1.8rem;list-style:none;}
+nav a{
+  color:var(--muted);text-decoration:none;font-weight:500;
+  letter-spacing:0.05em;font-size:0.88rem;text-transform:uppercase;
+  transition:color .25s;
+}
+nav a:hover{color:var(--cyan);}
+
+/* ---- STARS ---- */
+#stars{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;}
+
+/* ---- SECTIONS ---- */
+section{position:relative;z-index:1;}
+.section-inner{max-width:1120px;margin:0 auto;padding:6rem 2rem;}
+.section-tag{
+  display:block;font-family:'Orbitron',sans-serif;font-size:0.68rem;
+  letter-spacing:0.38em;color:var(--cyan);text-transform:uppercase;margin-bottom:.8rem;
+}
+.section-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(1.55rem,3vw,2.3rem);
+  font-weight:700;line-height:1.2;margin-bottom:1.4rem;
+}
+
+/* ---- HERO ---- */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:8rem 2rem 4rem;
+}
+.hero-tag{
+  font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:.32em;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:1.4rem;
+  opacity:0;animation:fadeUp .8s .15s forwards;
+}
+.hero-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(3.2rem,9vw,7.5rem);
+  font-weight:900;line-height:1;letter-spacing:.04em;
+  opacity:0;animation:fadeUp .8s .35s forwards;
+}
+.hero-title .c1{color:var(--cyan);}
+.hero-title .c2{color:var(--orange);}
+.hero-sub-label{
+  font-family:'Orbitron',sans-serif;font-size:clamp(.82rem,1.8vw,1.1rem);
+  color:var(--muted);letter-spacing:.22em;
+  opacity:0;animation:fadeUp .8s .5s forwards;margin-top:.5rem;
+}
+.hero-desc{
+  font-size:1.05rem;color:var(--muted);max-width:580px;
+  margin:1.8rem auto 2.5rem;
+  opacity:0;animation:fadeUp .8s .65s forwards;
+  line-height:1.8;
+}
+.hero-badges{
+  display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;
+  margin-bottom:2.5rem;opacity:0;animation:fadeUp .8s .8s forwards;
+}
+.badge{
+  padding:.35rem 1.1rem;border:1px solid rgba(0,212,255,.25);border-radius:100px;
+  font-size:.78rem;font-family:'Orbitron',sans-serif;letter-spacing:.08em;
+  color:var(--cyan);background:rgba(0,212,255,.05);
+}
+.scroll-cue{
+  position:absolute;bottom:2.2rem;display:flex;flex-direction:column;align-items:center;
+  gap:.5rem;color:var(--muted);font-size:.72rem;letter-spacing:.18em;font-family:'Orbitron',sans-serif;
+  animation:bounce 2.2s infinite;
+}
+.scroll-arr{width:16px;height:16px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);}
+
+/* ---- ORBIT DECO ---- */
+.orbit{position:absolute;border-radius:50%;border:1px solid;pointer-events:none;}
+
+/* ---- PROBLEM ---- */
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;margin-top:2.5rem;}
+.prob-card{
+  background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.2);
+  border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:.9rem;
+  display:flex;align-items:flex-start;gap:1rem;
+}
+.prob-icon{
+  width:46px;height:46px;background:rgba(255,107,53,.14);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;
+}
+
+/* ---- TECH CARDS ---- */
+.tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;margin-top:2.8rem;}
+.tech-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:2rem;transition:all .35s;
+}
+.tech-card:hover{border-color:var(--cyan);background:rgba(0,212,255,.04);transform:translateY(-5px);}
+.tech-icon{
+  width:54px;height:54px;background:rgba(0,212,255,.1);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:1.7rem;
+  margin-bottom:1.1rem;border:1px solid rgba(0,212,255,.2);
+}
+.tech-card h3{font-family:'Orbitron',sans-serif;font-size:.88rem;font-weight:700;color:var(--cyan);margin-bottom:.55rem;}
+.tech-card p{color:var(--muted);font-size:.93rem;line-height:1.65;}
+
+/* ---- CANVAS CONTAINERS ---- */
+.cv-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative;}
+.cv-hud{
+  position:absolute;top:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 1.4rem;
+  background:linear-gradient(180deg,rgba(6,13,31,.95) 0%,transparent 100%);
+  pointer-events:none;z-index:10;
+}
+.cv-label{font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:.22em;color:var(--cyan);}
+.cv-dots{display:flex;gap:.8rem;}
+.cv-dot{display:flex;align-items:center;gap:.35rem;font-size:.78rem;color:var(--muted);}
+.blink{width:7px;height:7px;border-radius:50%;animation:pulse 1.6s infinite;}
+
+/* ---- ROBOT STATUS ---- */
+#robotStatus{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.4rem;}
+
+/* ---- IMPACT / ODS ---- */
+.ods-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:2.8rem;}
+.ods-card{border-radius:16px;padding:1.8rem 1.3rem;border:1px solid;transition:transform .3s;}
+.ods-card:hover{transform:translateY(-4px) scale(1.02);}
+.ods-num{font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:900;line-height:1;margin-bottom:.4rem;}
+.ods-lbl{font-size:.8rem;font-weight:700;letter-spacing:.05em;margin-bottom:.5rem;}
+.ods-desc{font-size:.8rem;color:var(--muted);line-height:1.45;}
+
+/* ---- STATS ---- */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;margin-top:2rem;}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.7rem;text-align:center;}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;color:var(--cyan);margin-bottom:.2rem;}
+.stat-lbl{color:var(--muted);font-size:.83rem;}
+
+/* ---- TEAM ---- */
+.team-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.1rem;margin-top:2.8rem;}
+.member{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:1.5rem .9rem;text-align:center;transition:all .3s;
+}
+.member:hover{border-color:var(--cyan);transform:translateY(-4px);}
+.avatar{
+  width:58px;height:58px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.1rem;
+  margin:0 auto .9rem;
+}
+.member-name{font-weight:600;font-size:.82rem;line-height:1.3;margin-bottom:.2rem;}
+.member-id{font-size:.72rem;color:var(--muted);font-family:'Orbitron',sans-serif;}
+
+/* ---- SOLUTION STATS ---- */
+.sol-stat{
+  border-radius:12px;padding:1rem 1.4rem;flex:1;min-width:130px;text-align:center;
+}
+.sol-stat-num{font-family:'Orbitron',sans-serif;font-size:1.7rem;font-weight:900;line-height:1;margin-bottom:.2rem;}
+.sol-stat-lbl{font-size:.8rem;}
+
+/* ---- FOOTER ---- */
+footer{
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:3rem 2rem;text-align:center;color:var(--muted);font-size:.88rem;
+}
+
+/* ---- REVEAL ---- */
+.reveal{opacity:1;transform:none;transition:opacity .7s,transform .7s;}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* ---- KEYFRAMES ---- */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(9px);}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spinR{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+
+/* ---- TWO COL ---- */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+
+/* ---- GLOW ORBS ---- */
+.glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- ======== NAV ======== -->
+<nav>
+  <a href="#hero" class="nav-logo">SPY<span>26</span>DER</a>
+  <ul>
+    <li><a href="#problema">Problema</a></li>
+    <li><a href="#solucao">Solução</a></li>
+    <li><a href="#tecnologias">Tecnologia</a></li>
+    <li><a href="#prototipo">Protótipo</a></li>
+    <li><a href="#mapeamento">Mapeamento</a></li>
+    <li><a href="#impacto">Impacto</a></li>
+    <li><a href="#equipe">Equipe</a></li>
+  </ul>
+</nav>
+
+<!-- GLOW DECO -->
+<div class="glow" style="width:600px;height:600px;background:rgba(0,212,255,.04);top:5vh;left:-220px;"></div>
+<div class="glow" style="width:500px;height:500px;background:rgba(255,107,53,.05);top:25vh;right:-180px;"></div>
+
+<!-- ======== HERO ======== -->
+<section id="hero">
+  <div class="hero-tag">Global SOLUTION · FIAP 2ESS · Squad SPY26DER</div>
+  <h1 class="hero-title"><span class="c1">SPY</span><span class="c2">26</span><span class="c1">DER</span></h1>
+  <div class="hero-sub-label">SOLUÇÃO PARA DESAFIOS DE EXPLORAÇÃO LUNAR</div>
+  <p class="hero-desc">Resposta ao desafio GS2026: enxame robótico para mapeamento e navegação de tubos de lava, entregando dados 3D confiáveis para habitats lunares protegidos.</p>
+  <div class="hero-badges">
+    <span class="badge">SWARM ROBOTICS</span>
+    <span class="badge">LIDAR 3D</span>
+    <span class="badge">SLAM</span>
+    <span class="badge">MESH NETWORK</span>
+    <span class="badge">PROGRAMA ARTEMIS</span>
+  </div>
+
+  <!-- Hero spider showcase -->
+  <div style="position:relative;width:100%;max-width:760px;height:200px;margin:1rem auto;">
+    <canvas id="heroCanvas" width="1400" height="380" style="width:100%;height:190px;"></canvas>
+  </div>
+
+  <div class="scroll-cue">
+    <span>EXPLORE</span><div class="scroll-arr"></div>
+  </div>
+
+  <!-- Orbital rings -->
+  <div class="orbit" style="width:720px;height:720px;border-color:rgba(0,212,255,.05);top:50%;left:50%;transform:translate(-50%,-50%);animation:spin 45s linear infinite;"></div>
+  <div class="orbit" style="width:520px;height:520px;border-color:rgba(255,107,53,.05);top:50%;left:50%;transform:translate(-50%,-50%);animation:spinR 32s linear infinite;"></div>
+</section>
+
+<!-- ======== PROBLEMA ======== -->
+<section id="problema">
+  <div class="section-inner">
+    <span class="section-tag reveal">01 — Contexto & Problema</span>
+    <h2 class="section-title reveal">A Lua Precisa de Proteção Natural</h2>
+    <div class="prob-grid">
+      <div class="reveal">
+        <p style="color:var(--muted);font-size:1rem;margin-bottom:2rem;line-height:1.85;">O desafio  pede soluções para tornar a Lua acessível e habitável. A superfície lunar é inóspita, mas os <strong style="color:var(--text);">tubos de lava</strong> fornecem proteção natural contra radiação e impactos, criando o cenário certo para nosso projeto.</p>
+        <div class="prob-card">
+          <div class="prob-icon">☢️</div>
+          <div><strong style="display:block;margin-bottom:.25rem;color:var(--orange);">Radiação Cósmica</strong><span style="color:var(--muted);font-size:.9rem;">Exposição contínua e letal sem atmosfera protetora na superfície lunar</span></div>
+        </div>
+        <div class="prob-card">
+          <div class="prob-icon">🌡️</div>
+          <div><strong style="display:block;margin-bottom:.25rem;color:var(--orange);">Variações Térmicas de 300°C</strong><span style="color:var(--muted);font-size:.9rem;">De -173°C à noite a +127°C durante o dia lunar</span></div>
+        </div>
+        <div class="prob-card">
+          <div class="prob-icon">☄️</div>
+          <div><strong style="display:block;margin-bottom:.25rem;color:var(--orange);">Impacto de Micrometeoritos</strong><span style="color:var(--muted);font-size:.9rem;">Bombardeio constante sem proteção atmosférica</span></div>
+        </div>
+        <div class="prob-card">
+          <div class="prob-icon">📡</div>
+          <div><strong style="display:block;margin-bottom:.25rem;color:var(--orange);">Ausência de GPS Subterrâneo</strong><span style="color:var(--muted);font-size:.9rem;">Navegação convencional impossível no interior das cavernas</span></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <canvas id="moonCanvas" width="520" height="420" style="width:100%;border-radius:16px;"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== SOLUÇÃO ======== -->
+<section id="solucao" style="background:var(--bg2);">
+  <div class="section-inner">
+    <span class="section-tag reveal">02 — Solução Proposta</span>
+    <h2 class="section-title reveal">Sistema Robótico <span style="color:var(--cyan);">SPY26DER</span></h2>
+    <div class="two-col" style="margin-top:3rem;">
+      <div class="reveal">
+        <p style="font-size:1.05rem;color:var(--muted);line-height:1.85;margin-bottom:1.8rem;">O SPY26DER responde com um <strong style="color:var(--text);">enxame robótico cooperativo</strong> capaz de mapear espaços subterrâneos lunares sem GPS. As plataformas usam LIDAR e SLAM para gerar mapas 3D confiáveis e suportar decisões de engenharia e infraestrutura.</p>
+        <p style="font-size:1rem;color:var(--muted);line-height:1.85;margin-bottom:2rem;">Usando os tubos de lava como abrigo natural, a solução reduz a complexidade logística do projeto de habitats lunares e entrega informações de alta precisão para futuros módulos de missão.</p>
+        <div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+          <div class="sol-stat" style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.25);">
+            <div class="sol-stat-num" style="color:var(--cyan);">99.9%</div>
+            <div class="sol-stat-lbl" style="color:var(--muted);">Integridade de dados</div>
+          </div>
+          <div class="sol-stat" style="background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.25);">
+            <div class="sol-stat-num" style="color:var(--orange);">&lt;100ms</div>
+            <div class="sol-stat-lbl" style="color:var(--muted);">Latência SLAM</div>
+          </div>
+          <div class="sol-stat" style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);">
+            <div class="sol-stat-num" style="color:var(--gold);">±2cm</div>
+            <div class="sol-stat-lbl" style="color:var(--muted);">Precisão LIDAR</div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="display:flex;justify-content:center;align-items:center;">
+        <canvas id="spiderArtCanvas" width="440" height="440" style="width:100%;max-width:420px;"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== TECNOLOGIAS ======== -->
+<section id="tecnologias">
+  <div class="section-inner">
+    <span class="section-tag reveal">03 — Arquitetura Tecnológica</span>
+    <h2 class="section-title reveal">Tecnologias de Ponta para Ambientes Hostis</h2>
+    <div class="tech-grid">
+      <div class="tech-card reveal">
+        <div class="tech-icon">🕷️</div>
+        <h3>SWARM ROBOTICS</h3>
+        <p>Múltiplos agentes cooperativos garantem redundância e resiliência. Quando um robô falha, o enxame continua. A distribuição dinâmica de áreas evita sobreposição e maximiza a cobertura das cavernas com eficiência total.</p>
+      </div>
+      <div class="tech-card reveal">
+        <div class="tech-icon" style="background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.2);">⚡</div>
+        <h3 style="color:var(--orange);">MAPEAMENTO 3D LIDAR</h3>
+        <p>Sensores laser disparam pulsos de luz e medem o retorno com precisão centimétrica. Operam em escuridão total, gerando nuvens de pontos georreferenciadas essenciais para o planejamento de engenharia civil lunar.</p>
+      </div>
+      <div class="tech-card reveal">
+        <div class="tech-icon" style="background:rgba(255,184,0,.1);border-color:rgba(255,184,0,.2);">🧭</div>
+        <h3 style="color:var(--gold);">NAVEGAÇÃO SLAM</h3>
+        <p>Simultaneous Localization and Mapping: os robôs calculam sua posição e constroem o mapa ao mesmo tempo, sem GPS. Algoritmos de alta performance processam dados LIDAR com latência inferior a 100ms para desvio autônomo de obstáculos.</p>
+      </div>
+      <div class="tech-card reveal">
+        <div class="tech-icon" style="background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.2);">📡</div>
+        <h3 style="color:var(--green);">REDE MESH</h3>
+        <p>Cada robô funciona como nó repetidor, mantendo fluxo de dados constante das profundezas subterrâneas até a base de controle na superfície. A rede auto-reorganiza quando unidades falham, garantindo comunicação contínua.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== PROTÓTIPO ======== -->
+<section id="prototipo" style="background:var(--bg2);">
+  <div class="section-inner">
+    <span class="section-tag reveal">04 — Simulação do Protótipo</span>
+    <h2 class="section-title reveal">Protótipo SPY26DER em ação</h2>
+    <p style="color:var(--muted);max-width:680px;margin-bottom:2.5rem;font-size:1rem;line-height:1.8;" class="reveal">A simulação demonstra o comportamento do protótipo aprovado: robôs colaborativos vasculham um tubo de lava, enviam dados via rede mesh e constroem um mapa tridimensional contínuo que sustenta decisões de exploração segura.</p>
+    <div class="cv-wrap reveal">
+      <div class="cv-hud">
+        <span class="cv-label">● SIMULAÇÃO ATIVA — TUBO DE LAVA LUNAR</span>
+        <div class="cv-dots">
+          <div class="cv-dot"><div class="blink" style="background:var(--cyan);"></div>LIDAR</div>
+          <div class="cv-dot"><div class="blink" style="background:var(--orange);animation-delay:.4s;"></div>MESH</div>
+          <div class="cv-dot"><div class="blink" style="background:var(--green);animation-delay:.8s;"></div>MAPEADO</div>
+        </div>
+      </div>
+      <canvas id="simCanvas" width="1120" height="520" style="width:100%;display:block;"></canvas>
+    </div>
+    <div id="robotStatus"></div>
+  </div>
+</section>
+
+<!-- ======== MAPEAMENTO ======== -->
+<section id="mapeamento">
+  <div class="section-inner">
+    <span class="section-tag reveal">05 — Resultado do Mapeamento</span>
+    <h2 class="section-title reveal">Nuvem de Pontos 3D Georreferenciada</h2>
+    <p style="color:var(--muted);max-width:680px;margin-bottom:2.5rem;font-size:1rem;line-height:1.8;" class="reveal">O resultado : uma nuvem de pontos tridimensional com dados georreferenciados para identificar áreas planas, pontos de acesso e regiões seguras dentro do tubo de lava. O mapa serve como base para projetar habitats e rotas de manutenção.</p>
+    <div class="cv-wrap reveal">
+      <canvas id="mapCanvas" width="1120" height="520" style="width:100%;display:block;"></canvas>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box reveal">
+        <div class="stat-num" id="pointCount">—</div>
+        <div class="stat-lbl">Pontos Mapeados</div>
+      </div>
+      <div class="stat-box reveal">
+        <div class="stat-num" style="color:var(--orange);">±2cm</div>
+        <div class="stat-lbl">Precisão Centimétrica</div>
+      </div>
+      <div class="stat-box reveal">
+        <div class="stat-num" style="color:var(--gold);">360°</div>
+        <div class="stat-lbl">Cobertura Angular</div>
+      </div>
+      <div class="stat-box reveal">
+        <div class="stat-num" style="color:var(--green);">3</div>
+        <div class="stat-lbl">Zonas Habitáveis</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== IMPACTO ======== -->
+<section id="impacto" style="background:var(--bg2);">
+  <div class="section-inner">
+    <span class="section-tag reveal">06 — Impacto Estratégico</span>
+    <h2 class="section-title reveal">Impacto  e Sustentabilidade Lunar</h2>
+    <div class="ods-grid">
+      <div class="ods-card reveal" style="background:rgba(255,107,53,.07);border-color:rgba(255,107,53,.25);">
+        <div class="ods-num" style="color:var(--orange);">ODS 9</div>
+        <div class="ods-lbl" style="color:var(--orange);">INDÚSTRIA, INOVAÇÃO E INFRAESTRUTURA</div>
+        <div class="ods-desc">Desenvolvimento de sistemas autônomos, IA e robótica espacial de ponta</div>
+      </div>
+      <div class="ods-card reveal" style="background:rgba(0,212,255,.07);border-color:rgba(0,212,255,.25);">
+        <div class="ods-num" style="color:var(--cyan);">ODS 11</div>
+        <div class="ods-lbl" style="color:var(--cyan);">CIDADES E COMUNIDADES SUSTENTÁVEIS</div>
+        <div class="ods-desc">Habitats humanos seguros fora da Terra, protegidos por estruturas naturais</div>
+      </div>
+      <div class="ods-card reveal" style="background:rgba(255,184,0,.07);border-color:rgba(255,184,0,.25);">
+        <div class="ods-num" style="color:var(--gold);">ODS 12</div>
+        <div class="ods-lbl" style="color:var(--gold);">CONSUMO E PRODUÇÃO RESPONSÁVEIS</div>
+        <div class="ods-desc">Aproveitamento de estruturas naturais já existentes, reduzindo a pegada logística</div>
+      </div>
+      <div class="ods-card reveal" style="background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.25);">
+        <div class="ods-num" style="color:var(--green);">ODS 17</div>
+        <div class="ods-lbl" style="color:var(--green);">PARCERIAS E MEIOS DE IMPLEMENTAÇÃO</div>
+        <div class="ods-desc">Alinhado ao Programa Artemis, fortalecendo cooperação tecnológica global</div>
+      </div>
+    </div>
+
+    <!-- Artemis card -->
+    <div class="reveal" style="margin-top:3rem;">
+      <div style="background:linear-gradient(135deg,rgba(0,212,255,.05),rgba(0,102,255,.07));border:1px solid rgba(0,212,255,.2);border-radius:20px;padding:2.5rem 3rem;display:flex;gap:3rem;align-items:center;">
+        <div style="flex-shrink:0;text-align:center;">
+          <div style="font-size:4.5rem;">🚀</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:.9rem;font-weight:700;color:var(--cyan);margin-top:.5rem;line-height:1.4;">PROGRAMA<br>ARTEMIS</div>
+        </div>
+        <div>
+          <h3 style="font-family:'Orbitron',sans-serif;font-size:1.15rem;color:var(--cyan);margin-bottom:.9rem;">Brasil Signatário dos Acordos de Artemis</h3>
+          <p style="color:var(--muted);line-height:1.85;margin-bottom:.8rem;">O Brasil assinou os Acordos de Artemis em <strong style="color:var(--text);">15 de junho de 2021</strong>, tornando-se o primeiro país da América do Sul a aderir. O SPY26DER responde diretamente à responsabilidade técnica brasileira de desenvolver robótica lunar nacional.</p>
+          <p style="color:var(--muted);line-height:1.85;">Com mais de <strong style="color:var(--cyan);">30 países signatários</strong>, o mercado potencial para tecnologias de exploração lunar é global — e o SPY26DER está estrategicamente posicionado nesse ecossistema de <strong style="color:var(--text);">New Space</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== EQUIPE ======== -->
+<section id="equipe">
+  <div class="section-inner">
+    <span class="section-tag reveal">07 — Equipe</span>
+    <h2 class="section-title reveal">Squad SPY26DER — 2ESS</h2>
+    <div class="team-grid">
+      <div class="member reveal">
+        <div class="avatar" style="background:linear-gradient(135deg,#00D4FF,#0066FF);color:#000;">ME</div>
+        <div class="member-name">Maria Eduarda Sousa Acyole de Oliveira</div>
+        <div class="member-id">#566337</div>
+      </div>
+      <div class="member reveal">
+        <div class="avatar" style="background:linear-gradient(135deg,#FF6B35,#FF0066);color:#fff;">AM</div>
+        <div class="member-name">Arthur Marcio de Barros Silva</div>
+        <div class="member-id">#563359</div>
+      </div>
+      <div class="member reveal">
+        <div class="avatar" style="background:linear-gradient(135deg,#FFB800,#FF6B35);color:#000;">GA</div>
+        <div class="member-name">Gabriela Abdelnor Tavares</div>
+        <div class="member-id">#562291</div>
+      </div>
+      <div class="member reveal">
+        <div class="avatar" style="background:linear-gradient(135deg,#00FF88,#00D4FF);color:#000;">MG</div>
+        <div class="member-name">Matheus Goes da Silva</div>
+        <div class="member-id">#566407</div>
+      </div>
+      <div class="member reveal">
+        <div class="avatar" style="background:linear-gradient(135deg,#A855F7,#EC4899);color:#fff;">MC</div>
+        <div class="member-name">Mayke Costa Santos</div>
+        <div class="member-id">#562680</div>
+      </div>
+    </div>
+    <div style="margin-top:2.5rem;text-align:center;" class="reveal">
+      <div style="display:inline-flex;align-items:center;gap:1.2rem;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.1rem 2rem;flex-wrap:wrap;justify-content:center;">
+        <span style="font-family:'Orbitron',sans-serif;font-size:.78rem;color:var(--muted);">METODOLOGIA</span>
+        <span style="width:1px;height:18px;background:var(--border);"></span>
+        <span style="font-family:'Orbitron',sans-serif;font-size:.9rem;color:var(--cyan);">AGILE · SQUAD FRAMEWORK</span>
+        <span style="width:1px;height:18px;background:var(--border);"></span>
+        <span style="font-family:'Orbitron',sans-serif;font-size:.78rem;color:var(--muted);">FIAP · 2025</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="font-family:'Orbitron',sans-serif;font-size:1.3rem;color:var(--cyan);margin-bottom:.5rem;">SPY<span style="color:var(--orange);">26</span>DER</div>
+  <p>Sistema Robótico de Mapeamento Lunar · Global Solution · FIAP 2025</p>
+  <p style="margin-top:.4rem;font-size:.8rem;">Squad 2ESS · Programa Artemis · AEB · NASA · ESA</p>
+</footer>
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script>
+const PI2 = Math.PI * 2;
+const rng = (a,b) => Math.random()*(b-a)+a;
+const lerp = (a,b,t) => a+(b-a)*t;
+
+// ─────────────────────────────────────────────────────────────
+// 1. STARFIELD
+// ─────────────────────────────────────────────────────────────
+(function(){
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+  let stars=[];
+  function resize(){c.width=innerWidth;c.height=innerHeight;buildStars();}
+  function buildStars(){
+    stars=[];
+    for(let i=0;i<280;i++) stars.push({
+      x:Math.random()*c.width,y:Math.random()*c.height,
+      r:Math.random()*1.6+.2,a:Math.random()*.7+.15,
+      tw:Math.random()*PI2
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      s.tw+=.018;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,PI2);
+      ctx.fillStyle=`rgba(200,222,255,${s.a*(0.65+0.35*Math.sin(s.tw))})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  draw();
+})();
+
+// ─────────────────────────────────────────────────────────────
+// 2. HERO CANVAS — floating spider swarm
+// ─────────────────────────────────────────────────────────────
+(function(){
+  const c = document.getElementById('heroCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const COLS = ['#00D4FF','#FF6B35','#FFB800','#00FF88','#A855F7'];
+  const NUM = 5;
+  const spiders = COLS.map((col,i)=>({
+    x: W/(NUM+1)*(i+1)+rng(-30,30),
+    y: H/2+rng(-40,40),
+    col, scan:rng(0,PI2), lp:rng(0,PI2),
+    vx:rng(-1.2,1.2), vy:rng(-1,1)
+  }));
+
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    // Mesh lines
+    for(let i=0;i<NUM;i++) for(let j=i+1;j<NUM;j++){
+      const a=spiders[i],b=spiders[j];
+      const d=Math.hypot(b.x-a.x,b.y-a.y);
+      if(d<320){
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(0,212,255,${.2*(1-d/320)})`;
+        ctx.lineWidth=.8; ctx.stroke();
+      }
+    }
+    spiders.forEach((s,i)=>{
+      s.scan+=.04; s.lp+=.12;
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<60||s.x>W-60) s.vx*=-1;
+      if(s.y<30||s.y>H-30) s.vy*=-1;
+      // Scan beam
+      const bx=s.x+Math.cos(s.scan)*160, by=s.y+Math.sin(s.scan)*160;
+      ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(bx,by);
+      ctx.strokeStyle=s.col+'30'; ctx.lineWidth=1; ctx.stroke();
+      // Legs
+      for(let k=0;k<8;k++){
+        const la=(PI2/8)*k+Math.sin(s.lp+k*.9)*.18;
+        const lx=s.x+Math.cos(la)*28, ly=s.y+Math.sin(la)*28;
+        ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(lx,ly);
+        ctx.strokeStyle=s.col+'CC'; ctx.lineWidth=1.8; ctx.stroke();
+        ctx.beginPath(); ctx.arc(lx,ly,2,0,PI2);
+        ctx.fillStyle=s.col; ctx.fill();
+      }
+      // Body
+      ctx.beginPath(); ctx.arc(s.x,s.y,10,0,PI2);
+      ctx.fillStyle=s.col+'22'; ctx.fill();
+      ctx.strokeStyle=s.col; ctx.lineWidth=2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(s.x,s.y,4.5,0,PI2);
+      ctx.fillStyle=s.col; ctx.fill();
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ─────────────────────────────────────────────────────────────
+// 3. MOON CANVAS — cross-section problem illustration
+// ─────────────────────────────────────────────────────────────
+(function(){
+  const c=document.getElementById('moonCanvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let t=0;
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=.016;
+
+    // Space BG
+    ctx.fillStyle='#020812'; ctx.fillRect(0,0,W,H);
+
+    // Moon surface
+    const surfY=H*.38;
+    ctx.fillStyle='#12182A'; ctx.fillRect(0,surfY,W,H-surfY);
+
+    // Craters
+    [{x:70,y:surfY+35,r:22},{x:200,y:surfY+18,r:16},{x:370,y:surfY+50,r:28},{x:460,y:surfY+22,r:11}].forEach(cr=>{
+      ctx.beginPath(); ctx.arc(cr.x,cr.y,cr.r,0,PI2);
+      ctx.fillStyle='#0D1320'; ctx.fill();
+      ctx.strokeStyle='#1E2B40'; ctx.lineWidth=1; ctx.stroke();
+    });
+
+    // Radiation particles
+    for(let i=0;i<10;i++){
+      const px=40+i*46+Math.sin(t*2.2+i)*12;
+      const py=surfY-55-Math.abs(Math.sin(t*1.1+i*.7))*70;
+      const a=.35+.45*Math.abs(Math.sin(t*3+i));
+      ctx.beginPath(); ctx.arc(px,py,2.5,0,PI2);
+      ctx.fillStyle=`rgba(255,107,53,${a})`; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px+rng(-15,15),py+rng(8,28));
+      ctx.strokeStyle=`rgba(255,107,53,.12)`; ctx.lineWidth=1; ctx.stroke();
+    }
+
+    // Radiation label
+    ctx.font='bold 11px Rajdhani,sans-serif';
+    ctx.fillStyle='#FF6B35';
+    ctx.fillText('RADIAÇÃO CÓSMICA',14,surfY-8);
+    ctx.font='bold 10px Rajdhani,sans-serif';
+    ctx.fillStyle='rgba(255,107,53,.6)';
+    ctx.fillText('TEMPERATURA: +127°C',14,surfY+22);
+
+    // Tube opening on surface
+    const txC=260,openY=surfY;
+    ctx.beginPath(); ctx.ellipse(txC,openY,85,22,0,0,PI2);
+    ctx.fillStyle='#040A16'; ctx.fill();
+    ctx.strokeStyle='#1E3050'; ctx.lineWidth=2; ctx.stroke();
+
+    // Tube interior
+    ctx.beginPath(); ctx.ellipse(txC,openY+140,130,110,0,0,PI2);
+    ctx.fillStyle='#040A14'; ctx.fill();
+    ctx.strokeStyle='rgba(30,48,80,.8)'; ctx.lineWidth=2; ctx.stroke();
+
+    // Robot inside tube
+    const rx=txC+Math.cos(t*.6)*50, ry=openY+140+Math.sin(t*.8)*38;
+    // LIDAR beams
+    for(let i=0;i<16;i++){
+      const ang=(PI2/16)*i+t*1.5;
+      const blen=100+Math.sin(t*3+i)*15;
+      const bx=rx+Math.cos(ang)*blen, by=ry+Math.sin(ang)*blen;
+      ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(bx,by);
+      ctx.strokeStyle='rgba(0,212,255,.18)'; ctx.lineWidth=.8; ctx.stroke();
+      // Hit dot
+      ctx.beginPath(); ctx.arc(bx,by,1.5,0,PI2);
+      ctx.fillStyle='rgba(0,212,255,.7)'; ctx.fill();
+    }
+    // Robot legs
+    for(let k=0;k<8;k++){
+      const la=(PI2/8)*k+Math.sin(t*3+k)*.18;
+      const lx=rx+Math.cos(la)*16, ly=ry+Math.sin(la)*16;
+      ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(lx,ly);
+      ctx.strokeStyle='rgba(0,212,255,.8)'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(rx,ry,8,0,PI2);
+    ctx.fillStyle='rgba(0,212,255,.18)'; ctx.fill();
+    ctx.strokeStyle='#00D4FF'; ctx.lineWidth=2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(rx,ry,3.5,0,PI2);
+    ctx.fillStyle='#00D4FF'; ctx.fill();
+
+    // Safe zone label
+    ctx.font='500 10px Rajdhani,sans-serif';
+    ctx.fillStyle='#00FF88';
+    ctx.fillText('✓ TUBO DE LAVA — BLINDAGEM NATURAL',txC-115,openY+158);
+    ctx.fillStyle='rgba(0,255,136,.5)';
+    ctx.fillText('Temperatura: -20°C a +25°C | Radiação: BLOQUEADA',txC-130,openY+173);
+
+    // Cold label
+    ctx.fillStyle='#00D4FF';
+    ctx.fillText('TEMPERATURA INTERNA: -20°C',14,openY+90);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─────────────────────────────────────────────────────────────
+// 4. SPIDER ART — central robot illustration
+// ─────────────────────────────────────────────────────────────
+(function(){
+  const c=document.getElementById('spiderArtCanvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let t=0;
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=.018;
+    const cx=W/2,cy=H/2;
+
+    // Outer rings
+    for(let i=4;i>=0;i--){
+      ctx.beginPath(); ctx.arc(cx,cy,100+i*28,0,PI2);
+      ctx.strokeStyle=`rgba(0,212,255,${.04+i*.015})`; ctx.lineWidth=1; ctx.stroke();
+    }
+    // Orbiting nodes
+    for(let i=0;i<6;i++){
+      const ang=(PI2/6)*i+t*.4;
+      const ox=cx+Math.cos(ang)*155,oy=cy+Math.sin(ang)*155;
+      ctx.beginPath(); ctx.arc(ox,oy,5,0,PI2);
+      ctx.fillStyle=`rgba(0,212,255,${.4+.3*Math.sin(t+i)})`; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ox,oy);
+      ctx.strokeStyle='rgba(0,212,255,.08)'; ctx.lineWidth=.8; ctx.stroke();
+    }
+    // 8 legs
+    for(let k=0;k<8;k++){
+      const base=(PI2/8)*k;
+      const wave=base+Math.sin(t*2+k*.85)*.18;
+      const sx=cx+Math.cos(wave)*58, sy=cy+Math.sin(wave)*58;
+      const mx=cx+Math.cos(wave+.28)*108, my=cy+Math.sin(wave+.28)*108;
+      const ex=cx+Math.cos(wave-.18)*155, ey=cy+Math.sin(wave-.18)*155;
+      ctx.beginPath();
+      ctx.moveTo(sx,sy); ctx.quadraticCurveTo(mx,my,ex,ey);
+      ctx.strokeStyle=`rgba(0,212,255,${.55+.2*Math.sin(t+k)})`;
+      ctx.lineWidth=2.8; ctx.stroke();
+      // Joint
+      ctx.beginPath(); ctx.arc(mx,my,3.5,0,PI2);
+      ctx.fillStyle='#00D4FF'; ctx.fill();
+    }
+    // Body gradient
+    const bodyR=62;
+    ctx.beginPath(); ctx.arc(cx,cy,bodyR,0,PI2);
+    ctx.fillStyle='rgba(0,212,255,.06)'; ctx.fill();
+    ctx.strokeStyle='#00D4FF'; ctx.lineWidth=2.2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,bodyR*.63,0,PI2);
+    ctx.fillStyle='rgba(0,212,255,.09)'; ctx.fill();
+    ctx.strokeStyle='rgba(0,212,255,.4)'; ctx.lineWidth=1.2; ctx.stroke();
+    // Rotating scanner
+    const sa=t*2.8;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(sa)*bodyR*.42,cy+Math.sin(sa)*bodyR*.42);
+    ctx.strokeStyle='#00D4FF'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx+Math.cos(sa)*bodyR*.42,cy+Math.sin(sa)*bodyR*.42,4,0,PI2);
+    ctx.fillStyle='#00D4FF'; ctx.fill();
+    // Core
+    ctx.beginPath(); ctx.arc(cx,cy,7,0,PI2);
+    ctx.fillStyle='#00D4FF'; ctx.fill();
+    // Tech labels
+    const lbls=[{a:0,t:'LIDAR'},{a:Math.PI*.5,t:'SLAM'},{a:Math.PI,t:'MESH'},{a:Math.PI*1.5,t:'SoC'}];
+    ctx.font='bold 9px Orbitron,sans-serif';
+    ctx.textAlign='center';
+    ctx.fillStyle='rgba(0,212,255,.65)';
+    lbls.forEach(l=>{
+      const lx=cx+Math.cos(l.a)*(bodyR+26), ly=cy+Math.sin(l.a)*(bodyR+26);
+      ctx.fillText(l.t,lx,ly+3);
+    });
+    ctx.textAlign='left';
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─────────────────────────────────────────────────────────────
+// 5. SIMULATION CANVAS — swarm in cave
+// ─────────────────────────────────────────────────────────────
+(function(){
+  const c=document.getElementById('simCanvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  const ccx=W/2,ccy=H/2,crx=W*.43,cry=H*.38;
+
+  function inCave(x,y){
+    const nx=(x-ccx)/crx,ny=(y-ccy)/cry;
+    const d=Math.sqrt(nx*nx+ny*ny);
+    return d<(0.9+.09*Math.sin(Math.atan2(ny,nx)*5));
+  }
+
+  const pts=[];
+  const MAX=7000;
+  const RCOLS=['#00D4FF','#FF6B35','#FFB800','#00FF88'];
+  const RNAMES=['SPIDER-01','SPIDER-02','SPIDER-03','SPIDER-04'];
+
+  class Robot{
+    constructor(i){
+      this.i=i; this.col=RCOLS[i]; this.name=RNAMES[i];
+      this.x=ccx+rng(-80,80); this.y=ccy+rng(-40,40);
+      this.vx=rng(-1.5,1.5); this.vy=rng(-1.3,1.3);
+      this.scan=rng(0,PI2); this.spd=rng(.035,.07);
+      this.lp=rng(0,PI2); this.bat=88+rng(0,12);
+      this.pts=0; this.sig=82+rng(0,18);
+    }
+    update(){
+      this.scan+=this.spd; this.lp+=.14;
+      this.x+=this.vx; this.y+=this.vy;
+      if(!inCave(this.x+this.vx*6,this.y)){this.vx*=-1;this.vx+=rng(-.3,.3);}
+      if(!inCave(this.x,this.y+this.vy*6)){this.vy*=-1;this.vy+=rng(-.3,.3);}
+      const sp=Math.hypot(this.vx,this.vy);
+      if(sp>2.2){this.vx=this.vx/sp*2.2;this.vy=this.vy/sp*2.2;}
+      if(sp<.5){this.vx+=rng(-.4,.4);this.vy+=rng(-.4,.4);}
+      if(!inCave(this.x,this.y)){this.x=ccx+rng(-70,70);this.y=ccy+rng(-35,35);}
+      if(pts.length<MAX){
+        for(let k=0;k<10;k++){
+          const a=this.scan+(PI2/10)*k;
+          for(let d=25;d<Math.max(crx,cry);d+=5){
+            const px=this.x+Math.cos(a)*d, py=this.y+Math.sin(a)*d;
+            if(!inCave(px,py)){
+              pts.push({x:px+rng(-1,1),y:py+rng(-1,1),col:this.col,a:.75});
+              this.pts++; break;
+            }
+          }
+        }
+      }
+    }
+    draw(){
+      // Scan beams
+      for(let k=0;k<3;k++){
+        const a=this.scan+(PI2/3)*k;
+        ctx.beginPath(); ctx.moveTo(this.x,this.y);
+        ctx.lineTo(this.x+Math.cos(a)*220,this.y+Math.sin(a)*220);
+        ctx.strokeStyle=this.col+'20'; ctx.lineWidth=.8; ctx.stroke();
+      }
+      // Legs
+      for(let k=0;k<8;k++){
+        const la=(PI2/8)*k+Math.sin(this.lp+k)*.2;
+        const lx=this.x+Math.cos(la)*24, ly=this.y+Math.sin(la)*24;
+        ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(lx,ly);
+        ctx.strokeStyle=this.col+'BB'; ctx.lineWidth=1.6; ctx.stroke();
+        ctx.beginPath(); ctx.arc(lx,ly,2,0,PI2);
+        ctx.fillStyle=this.col; ctx.fill();
+      }
+      // Body
+      ctx.beginPath(); ctx.arc(this.x,this.y,10,0,PI2);
+      ctx.fillStyle=this.col+'22'; ctx.fill();
+      ctx.strokeStyle=this.col; ctx.lineWidth=2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(this.x,this.y,4.5,0,PI2);
+      ctx.fillStyle=this.col; ctx.fill();
+      // Label
+      ctx.save(); ctx.font='bold 8px Orbitron,sans-serif';
+      ctx.fillStyle=this.col; ctx.textAlign='center';
+      ctx.fillText(this.name,this.x,this.y-18); ctx.restore();
+    }
+    mesh(others){
+      others.forEach(o=>{
+        if(o.i<=this.i) return;
+        const d=Math.hypot(o.x-this.x,o.y-this.y);
+        if(d<310){
+          ctx.beginPath(); ctx.moveTo(this.x,this.y); ctx.lineTo(o.x,o.y);
+          ctx.strokeStyle=`rgba(0,212,255,${.28*(1-d/310)})`;
+          ctx.lineWidth=.9; ctx.setLineDash([4,7]); ctx.stroke(); ctx.setLineDash([]);
+        }
+      });
+    }
+  }
+
+  const robots=RNAMES.map((_,i)=>new Robot(i));
+
+  // Build status panels
+  const sdiv=document.getElementById('robotStatus');
+  if(sdiv){
+    robots.forEach(r=>{
+      const p=document.createElement('div');
+      p.id='rp'+r.i;
+      p.style.cssText=`background:${r.col}0D;border:1px solid ${r.col}38;border-radius:12px;padding:1rem;`;
+      p.innerHTML=`
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;">
+          <div style="width:7px;height:7px;border-radius:50%;background:${r.col};animation:pulse 1.5s infinite;"></div>
+          <span style="font-family:'Orbitron',sans-serif;font-size:.68rem;color:${r.col};">${r.name}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;font-size:.8rem;font-family:'Rajdhani',sans-serif;">
+          <span style="color:#7A8FA8;">Bateria</span><span id="rb${r.i}" style="color:${r.col};text-align:right;font-weight:600;">${Math.round(r.bat)}%</span>
+          <span style="color:#7A8FA8;">Sinal</span><span id="rs${r.i}" style="color:#00FF88;text-align:right;font-weight:600;">${Math.round(r.sig)}%</span>
+          <span style="color:#7A8FA8;">Pontos</span><span id="rp_${r.i}" style="color:#00D4FF;text-align:right;font-weight:600;">0</span>
+          <span style="color:#7A8FA8;">Status</span><span style="color:#00FF88;text-align:right;font-weight:600;">ATIVO</span>
+        </div>`;
+      sdiv.appendChild(p);
+    });
+  }
+
+  let frame=0;
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    frame++;
+
+    // BG
+    ctx.fillStyle='#020812'; ctx.fillRect(0,0,W,H);
+
+    // Grid
+    ctx.strokeStyle='rgba(26,40,64,.4)'; ctx.lineWidth=.5;
+    for(let gx=0;gx<W;gx+=80){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(let gy=0;gy<H;gy+=80){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+
+    // Cave interior
+    ctx.beginPath(); ctx.ellipse(ccx,ccy,crx,cry,0,0,PI2);
+    ctx.fillStyle='#040A16'; ctx.fill();
+    ctx.strokeStyle='#1A2E4A'; ctx.lineWidth=3; ctx.stroke();
+    ctx.strokeStyle='#0F1E35'; ctx.lineWidth=6; ctx.stroke();
+
+    // Points
+    pts.forEach(p=>{
+      ctx.beginPath(); ctx.arc(p.x,p.y,1.6,0,PI2);
+      ctx.fillStyle=p.col+'BB'; ctx.fill();
+    });
+
+    // Mesh + robots
+    robots.forEach(r=>r.mesh(robots));
+    robots.forEach(r=>{r.update();r.draw();});
+
+    // Update UI
+    if(frame%45===0){
+      robots.forEach(r=>{
+        const rb=document.getElementById('rb'+r.i);
+        const rs=document.getElementById('rs'+r.i);
+        const rp=document.getElementById('rp_'+r.i);
+        if(rb) rb.textContent=Math.round(r.bat)+'%';
+        if(rs) rs.textContent=Math.round(r.sig+Math.sin(Date.now()/900+r.i)*2.5)+'%';
+        if(rp) rp.textContent=r.pts.toLocaleString('pt-BR');
+      });
+    }
+
+    // HUD footer
+    ctx.save();
+    ctx.font='bold 9px Orbitron,sans-serif';
+    ctx.fillStyle='rgba(0,212,255,.5)';
+    ctx.fillText('PONTOS: '+pts.length.toLocaleString('pt-BR')+'  |  MISSÃO: '+Math.floor(frame/60)+'s',20,H-16);
+    ctx.restore();
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// ─────────────────────────────────────────────────────────────
+// 6. MAP CANVAS — final point cloud result
+// ─────────────────────────────────────────────────────────────
+(function(){
+  const c=document.getElementById('mapCanvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  const ccx=W/2,ccy=H/2,crx=W*.43,cry=H*.38;
+
+  function inCave(x,y){
+    const nx=(x-ccx)/crx,ny=(y-ccy)/cry;
+    const d=Math.sqrt(nx*nx+ny*ny);
+    return d<(0.9+.08*Math.sin(Math.atan2(ny,nx)*5));
+  }
+
+  // Pre-generate point cloud
+  const pts=[];
+  // Wall points
+  const NW=7000;
+  for(let i=0;i<NW;i++){
+    const a=(PI2/NW)*i;
+    const bump=.08*Math.sin(a*5);
+    const noise=rng(-.03,.03);
+    const rx=crx*(0.9+bump+noise), ry=cry*(0.9+bump+noise);
+    const x=ccx+Math.cos(a)*rx, y=ccy+Math.sin(a)*ry;
+    const df=(y-(ccy-cry))/(2*cry);
+    let r,g,b;
+    if(df<.25){r=0;g=Math.round(df*4*255);b=255;}
+    else if(df<.5){r=0;g=255;b=Math.round((.5-df)*4*255);}
+    else if(df<.75){r=Math.round((df-.5)*4*255);g=255;b=0;}
+    else{r=255;g=Math.round((1-df)*4*255);b=0;}
+    pts.push({x:x+rng(-1.5,1.5),y:y+rng(-1.5,1.5),col:`rgb(${r},${g},${b})`,sz:rng(.9,2.3)});
+  }
+  // Interior scatter
+  for(let i=0;i<1800;i++){
+    const x=ccx+rng(-crx*.82,crx*.82), y=ccy+rng(-cry*.82,cry*.82);
+    if(inCave(x,y)){
+      const df=(y-(ccy-cry))/(2*cry);
+      pts.push({x,y,col:`rgba(0,212,255,${.12+df*.15})`,sz:rng(.4,1.4)});
+    }
+  }
+
+  // Safe zones
+  const zones=[
+    {x:ccx-210,y:ccy+100,r:65,lbl:['ZONA-A','✓ Solo Plano','✓ Teto Estável']},
+    {x:ccx+8,y:ccy+115,r:60,lbl:['ZONA-B','✓ Baixa Vibração','✓ Área: ~1.1km²']},
+    {x:ccx+210,y:ccy+95,r:55,lbl:['ZONA-C','✓ Acesso Vertical','✓ Temp: -18°C']}
+  ];
+
+  let rev=0,t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=.009;
+    if(rev<1) rev+=.0025;
+    const vis=Math.floor(rev*pts.length);
+
+    // BG
+    ctx.fillStyle='#020812'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(26,40,64,.38)'; ctx.lineWidth=.5;
+    for(let gx=0;gx<W;gx+=80){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(let gy=0;gy<H;gy+=80){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+
+    // Points
+    for(let i=0;i<vis;i++){
+      const p=pts[i];
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.sz,0,PI2);
+      ctx.fillStyle=p.col; ctx.fill();
+    }
+
+    // Cave outline
+    ctx.beginPath(); ctx.ellipse(ccx,ccy,crx,cry,0,0,PI2);
+    ctx.strokeStyle='rgba(0,212,255,.14)'; ctx.lineWidth=2; ctx.stroke();
+
+    // Safe zones
+    if(rev>.7){
+      zones.forEach((z,i)=>{
+        const pls=.6+.4*Math.sin(t*2+i*1.3);
+        ctx.beginPath(); ctx.arc(z.x,z.y,z.r,0,PI2);
+        ctx.fillStyle=`rgba(0,255,136,${.07*pls})`; ctx.fill();
+        ctx.strokeStyle=`rgba(0,255,136,${.55*pls})`; ctx.lineWidth=2; ctx.stroke();
+        ctx.beginPath(); ctx.arc(z.x,z.y,z.r+12*pls,0,PI2);
+        ctx.strokeStyle=`rgba(0,255,136,${.12*pls})`; ctx.lineWidth=1; ctx.stroke();
+        ctx.save(); ctx.font='bold 10px Orbitron,sans-serif';
+        ctx.textAlign='center';
+        ctx.fillStyle='#00FF88';
+        z.lbl.forEach((l,li)=>{ctx.fillText(l,z.x,z.y+(li-1)*14);});
+        ctx.restore();
+      });
+    }
+
+    // Legend
+    const li=[
+      {c:'rgb(0,100,255)',l:'Chão (< 1m)'},
+      {c:'rgb(0,255,160)',l:'Parede lateral'},
+      {c:'rgb(255,230,0)',l:'Parede superior'},
+      {c:'rgb(255,60,0)',l:'Teto (> 3m)'},
+      {c:'rgba(0,255,136,.8)',l:'Zona habitável'},
+    ];
+    ctx.save();
+    ctx.fillStyle='rgba(6,13,31,.88)';
+    ctx.beginPath();
+    ctx.roundRect?ctx.roundRect(W-205,12,198,li.length*22+28,8):ctx.rect(W-205,12,198,li.length*22+28);
+    ctx.fill();
+    ctx.strokeStyle='rgba(0,212,255,.2)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.font='bold 8px Orbitron,sans-serif'; ctx.fillStyle='rgba(0,212,255,.7)';
+    ctx.fillText('LEGENDA DE ALTITUDE',W-197,30);
+    li.forEach((item,i)=>{
+      const iy=44+i*22;
+      ctx.fillStyle=item.c; ctx.fillRect(W-197,iy,13,10);
+      ctx.font='600 10px Rajdhani,sans-serif'; ctx.fillStyle='#7A8FA8';
+      ctx.fillText(item.l,W-179,iy+9);
+    });
+    ctx.restore();
+
+    // Progress
+    ctx.save();
+    ctx.font='bold 9px Orbitron,sans-serif'; ctx.fillStyle='rgba(0,212,255,.55)';
+    ctx.fillText('NUVEM DE PONTOS: '+vis.toLocaleString('pt-BR')+' / '+pts.length.toLocaleString('pt-BR'),20,H-16);
+    ctx.restore();
+
+    // Update counter
+    const el=document.getElementById('pointCount');
+    if(el) el.textContent=vis.toLocaleString('pt-BR');
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─────────────────────────────────────────────────────────────
+// 7. SCROLL REVEAL
+// ─────────────────────────────────────────────────────────────
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach((el,i)=>{
+  el.style.transitionDelay=(i%4)*.1+'s';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
